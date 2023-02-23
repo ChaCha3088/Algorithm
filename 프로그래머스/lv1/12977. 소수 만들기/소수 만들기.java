@@ -9,10 +9,7 @@ class Solution {
             for (int j = i + 1; j < length - 1; j++) {
                 for (int k = j + 1; k < length; k++) {
                     int sum = nums[i] + nums[j] + nums[k];
-                    System.out.println(sum);
-                    int prime = isPrime(sum);
-                    System.out.println(prime);
-                    answer += prime;
+                    answer += isPrime(sum);
                 }
             }
         }
