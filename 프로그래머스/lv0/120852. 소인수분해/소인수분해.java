@@ -21,9 +21,6 @@ class Solution {
         }
         
         List<Integer> list = new ArrayList<>(set);
-        list.stream()
-            .sorted()
-            .collect(Collectors.toList());
         
         int[] answer = new int[list.size()];
         
