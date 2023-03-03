@@ -2,12 +2,15 @@
 -- 저자 ID(AUTHOR_ID), 저자명(AUTHOR_NAME), 카테고리(CATEGORY), 매출액(SALES) 리스트를 출력
 -- 결과는 저자 ID를 오름차순으로, 저자 ID가 같다면 카테고리를 내림차순 정렬
 
-SELECT a.author_id, author_name, category, sum(a.price * c.sales) as total_sales
-from book as a 
-inner join author as b 
-on a.author_id = b.author_id
-inner join book_sales as c 
-on a.book_id = c.book_id 
-where year(sales_date) = 2022 and month(sales_date) = 01
-group by a.author_id, a.category
-order by a.author_id asc, category desc
+SELECT B.AUTHOR_ID, AUTHOR_NAME, CATEGORY, SUM(B.PRICE * SALES.SALES) AS TOTAL_SALES
+FROM BOOK B
+
+JOIN BOOK_SALES SALES
+ON B.BOOK_ID = SALES.BOOK_ID
+
+JOIN AUTHOR A
+ON A.AUTHOR_ID = B.AUTHOR_ID
+
+WHERE DATE_FORMAT(SALES.SALES_DATE, '%Y-%m') = '2022-01'
+GROUP BY B.AUTHOR_ID, B.CATEGORY
+ORDER BY B.AUTHOR_ID ASC, CATEGORY DESC
