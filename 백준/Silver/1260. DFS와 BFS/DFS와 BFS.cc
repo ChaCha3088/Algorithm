@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <queue>
+#include <stack>
 #include <vector>
 
 #define fastIo cin.tie(0), cout.tie(0), ios::sync_with_stdio(0)
@@ -16,6 +17,7 @@ vector<int> v[10001];
 
 int dfsVisited[1001];
 vector<int> dfsResult;
+stack<int> dfsStack;
 
 int bfsVisited[1001];
 vector<int> bfsResult;
@@ -24,14 +26,31 @@ void dfs(int x) {
     //방문 기록
     dfsVisited[x] = 1;
     dfsResult.push_back(x);
+    dfsStack.push(x);
 
-    for (int i = 0; i < v[x].size(); ++i) {
-        //방문 기록이 없으면
-        if (!dfsVisited[v[x][i]] == 1) {
-            //재귀
-            dfs(v[x][i]);
+    while (!dfsStack.empty()) {
+        bool able = false;
+        int t = dfsStack.top();
+
+        for (int i = 0; i < v[t].size(); ++i) {
+            //방문 기록이 없으면
+            if (!dfsVisited[v[t][i]] == 1) {
+                dfsResult.push_back(v[t][i]);
+                dfsStack.push(v[t][i]);
+                //방문 기록
+                dfsVisited[v[t][i]] = 1;
+                able = true;
+                break;
+            }
+        }
+
+        //이번에 한번도 방문하지 않으면
+        if (!able) {
+            dfsStack.pop();
         }
     }
+
+
 }
 
 void bfs(int start) {
