@@ -1,132 +1,76 @@
-/////////////////////////////////////////////////////////////////////////////////////////////
-// 기본 제공코드는 임의 수정해도 관계 없습니다. 단, 입출력 포맷 주의
-// 아래 표준 입출력 예제 필요시 참고하세요.
-// 표준 입력 예제
-// int a;
-// double b;
-// char g;
-// String var;
-// long AB;
-// a = sc.nextInt();                           // int 변수 1개 입력받는 예제
-// b = sc.nextDouble();                        // double 변수 1개 입력받는 예제
-// g = sc.nextByte();                          // char 변수 1개 입력받는 예제
-// var = sc.next();                            // 문자열 1개 입력받는 예제
-// AB = sc.nextLong();                         // long 변수 1개 입력받는 예제
-/////////////////////////////////////////////////////////////////////////////////////////////
-// 표준 출력 예제
-// int a = 0;                            
-// double b = 1.0;               
-// char g = 'b';
-// String var = "ABCDEFG";
-// long AB = 12345678901234567L;
-//System.out.println(a);                       // int 변수 1개 출력하는 예제
-//System.out.println(b); 		       						 // double 변수 1개 출력하는 예제
-//System.out.println(g);		       						 // char 변수 1개 출력하는 예제
-//System.out.println(var);		       				   // 문자열 1개 출력하는 예제
-//System.out.println(AB);		       				     // long 변수 1개 출력하는 예제
-/////////////////////////////////////////////////////////////////////////////////////////////
-import java.util.Scanner;
-import java.io.FileInputStream;
+import java.io.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
 
-/*
-   사용하는 클래스명이 Solution 이어야 하므로, 가급적 Solution.java 를 사용할 것을 권장합니다.
-   이러한 상황에서도 동일하게 java Solution 명령으로 프로그램을 수행해볼 수 있습니다.
- */
-class Solution
-{
-    private static int[][] arr;
-    private static int N;
-    private static int min;
-    
-	public static void main(String args[]) throws Exception
-	{
-		/*
-		   아래의 메소드 호출은 앞으로 표준 입력(키보드) 대신 input.txt 파일로부터 읽어오겠다는 의미의 코드입니다.
-		   여러분이 작성한 코드를 테스트 할 때, 편의를 위해서 input.txt에 입력을 저장한 후,
-		   이 코드를 프로그램의 처음 부분에 추가하면 이후 입력을 수행할 때 표준 입력 대신 파일로부터 입력을 받아올 수 있습니다.
-		   따라서 테스트를 수행할 때에는 아래 주석을 지우고 이 메소드를 사용하셔도 좋습니다.
-		   단, 채점을 위해 코드를 제출하실 때에는 반드시 이 메소드를 지우거나 주석 처리 하셔야 합니다.
-		 */
-		//System.setIn(new FileInputStream("res/input.txt"));
+public class Solution {
+    private static int T, N, min;
+    private static final int[] dx = {-1, 1, 0, 0};
+    private static final int[] dy = {0, 0, -1, 1};
+    private static int[] visited;
+    private static int[][] coordinate;
 
-		/*
-		   표준입력 System.in 으로부터 스캐너를 만들어 데이터를 읽어옵니다.
-		 */
-		Scanner sc = new Scanner(System.in);
-		int T;
-		T=sc.nextInt();
-		/*
-		   여러 개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
-		*/
+    public static void main(String[] args) throws IOException {
+        StringBuilder sb = new StringBuilder();
 
-		for(int test_case = 1; test_case <= T; test_case++)
-		{
-		
-			/////////////////////////////////////////////////////////////////////////////////////////////
-			//최소값 초기화
+        //입력
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        T = Integer.parseInt(st.nextToken());
+
+        for (int i = 0; i < T; i++) {
+            st = new StringTokenizer(br.readLine());
+            N = Integer.parseInt(st.nextToken());
             min = Integer.MAX_VALUE;
+            coordinate = new int[N + 2][2];
+            visited = new int[N + 1];
 
-            //입력
-            N = sc.nextInt();
+            st = new StringTokenizer(br.readLine());
 
-            arr = new int[N + 2][2];
+            //회사 좌표
+            coordinate[0][0] = Integer.parseInt(st.nextToken());
+            coordinate[0][1] = Integer.parseInt(st.nextToken());
 
-            for (int i = 0; i < N + 2; i++) {
-                arr[i][0] = sc.nextInt();
-                arr[i][1] = sc.nextInt();
+            //집 좌표
+            coordinate[N + 1][0] = Integer.parseInt(st.nextToken());
+            coordinate[N + 1][1] = Integer.parseInt(st.nextToken());
+
+            //고객 좌표
+            for (int j = 1; j <= N; j++) {
+                coordinate[j][0] = Integer.parseInt(st.nextToken());
+                coordinate[j][1] = Integer.parseInt(st.nextToken());
             }
 
-            findWay(arr[0], new int[N + 1], 0);
-
-            //출력
-            StringBuilder sb = new StringBuilder();
-            sb.append("#").append(test_case).append(" ");
-            sb.append(min);
-
-            System.out.println(sb);
-			/////////////////////////////////////////////////////////////////////////////////////////////
-
-		}
-	}
-    
-    private static void findWay(int[] current, int[] map, int mileage) {
-        boolean finish = true;
-
-        //고객 집 확인
-        for (int i = 0; i < map.length - 1; i++) {
-            //방문 안한 집이면
-            if (map[i] == 0) {
-                //지도 표시
-                map[i] = 1;
-
-                //거리 계산
-                int x = Math.abs(arr[i + 2][0] - current[0]);
-                int y = Math.abs(arr[i + 2][1] - current[1]);
-
-                int far = x + y;
-
-                //방문
-                findWay(arr[i + 2], map, mileage + far);
-
-                map[i] = 0;
-
-                finish =false;
-            }
+            find(0, coordinate[0][0], coordinate[0][1], 0);
+            sb.append("#" + (i + 1) + " " + min + "\n");
         }
 
-        if (finish) {
-            //모두 방문했으면, 집으로
-            //거리 계산
-            int x = Math.abs(arr[1][0] - current[0]);
-            int y = Math.abs(arr[1][1] - current[1]);
+        //출력
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(sb.toString());
+        bw.flush();
+        bw.close();
+    }
 
-            int far = x + y;
-            int result = far + mileage;
+    private static void find(int cnt, int x, int y, int len) {
+        if (cnt >= N) {
+            len += calc(x, y, coordinate[N + 1][0], coordinate[N + 1][1]);
+            if (len < min) {
+                min = len;
+            }
+            return;
+        }
 
-            //최소값과 비교
-            if (min > result) {
-                min = result;
+        for (int i = 1; i <= N; i++) {
+            if (visited[i] != 1) {
+                visited[i] = 1;
+                find(cnt + 1, coordinate[i][0], coordinate[i][1], len + calc(x, y, coordinate[i][0], coordinate[i][1]));
+                visited[i] = 0;
             }
         }
+    }
+
+    private static int calc(int x1, int y1, int x2, int y2) {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
 }
