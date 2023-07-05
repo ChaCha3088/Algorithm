@@ -7,11 +7,9 @@ for i in range(N):
     data = list(map(int, data))
     inp.append(data)
 
-arr = [[0 for j in range(1000)] for i in range(1000)]
+arr = [[0 for j in range(1002)] for i in range(1002)]
 
 result = []
-
-before = 0
 
 idx = N - 1
 while (idx >= 0):
@@ -29,8 +27,6 @@ while (idx >= 0):
                 plus += 1
 
     result.append(plus)
-
-    before = plus
 
     idx -= 1
 
