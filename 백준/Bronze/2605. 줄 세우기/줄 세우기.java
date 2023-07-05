@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -15,36 +14,34 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
 		
+		//입력
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		int N = Integer.parseInt(st.nextToken());
 		
-		List<Integer> input = new ArrayList();
-		input.add(0);
-				
-		List<Integer> lst = new ArrayList();
-		lst.add(0);
-		
 		st = new StringTokenizer(br.readLine());
+		List<Integer> cards = new ArrayList();
+		cards.add(0);
 		for (int i = 1; i <= N; i++) {
-			lst.add(i);
-			input.add(Integer.parseInt(st.nextToken()));
+			cards.add(Integer.parseInt(st.nextToken()));
 		}
 		
+		List<Integer> students = new ArrayList();
+		students.add(0);
+		for (int i = 1; i <= N; i++) {
+			students.add(i);
+		}
 		
 		for (int i = 2; i <= N; i++) {
-            int number = input.get(i);
-
-            int idx = lst.indexOf(i);
-
-            lst.remove(i);
-
-            lst.add(idx - number, i);
-        }
-		
-		for (int i = 1; i <= N; i++) {
-			sb.append(lst.get(i)).append(" ");
+			int idx = students.indexOf(i);
+			students.remove(idx);
+			
+			students.add(i - cards.get(i), i);
 		}
 		
+		for (int i = 1; i <= N; i++) {
+			sb.append(students.get(i)).append(" ");
+		}
+
 		//출력
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         bw.write(sb.toString());
