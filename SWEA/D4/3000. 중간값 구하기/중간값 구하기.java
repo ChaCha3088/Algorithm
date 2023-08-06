@@ -2,69 +2,60 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 public class Solution {
+    private static StringBuilder sb = new StringBuilder();
+    private static final int div = 20_171_109;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
 
         int T = Integer.parseInt(br.readLine());
 
         for (int test = 1; test <= T; test++) {
-            Queue<Integer> minHeap = new PriorityQueue<>(new Comparator<Integer>() {
-                @Override
-                public int compare(Integer o1, Integer o2) {
-                    return o2 - o1;
+            String[] split = br.readLine().split(" ");
+            int N = Integer.parseInt(split[0]), A = Integer.parseInt(split[1]);
+
+            Queue<Integer> leftPq = new PriorityQueue<>(Collections.reverseOrder());
+            Queue<Integer> rightPq = new PriorityQueue<>();
+
+            // 초기값을 왼쪽 pq에 넣음
+            leftPq.offer(A);
+
+            int mid = 0;
+
+            for (int n = 1; n <= N; n++) {
+                split = br.readLine().split(" ");
+                int X = Integer.parseInt(split[0]), Y = Integer.parseInt(split[1]);
+
+                if (X < leftPq.peek() && Y < leftPq.peek()) {
+                    leftPq.offer(X);
+                    leftPq.offer(Y);
+
+                    rightPq.offer(leftPq.poll());
                 }
-            });
-            Queue<Integer> maxHeap = new PriorityQueue<>();
+                else if (X > leftPq.peek() && Y > leftPq.peek()) {
+                    rightPq.offer(X);
+                    rightPq.offer(Y);
 
-            String[] s = br.readLine().split(" ");
-            int N = Integer.parseInt(s[0]), A = Integer.parseInt(s[1]);
-
-            minHeap.offer(A);
-
-            int mid = A;
-            int answer = 0;
-
-            for (int i = 1; i <= N; i++) {
-                s = br.readLine().split(" ");
-                int X = Integer.parseInt(s[0]), Y = Integer.parseInt(s[1]);
-
-                if (X < minHeap.peek() && Y < minHeap.peek()) {
-                    minHeap.add(X);
-                    minHeap.add(Y);
-
-                    maxHeap.add(minHeap.poll());
-                }
-                else if (X > minHeap.peek() && Y > minHeap.peek()) {
-                    maxHeap.add(X);
-                    maxHeap.add(Y);
-
-                    minHeap.add(maxHeap.poll());
+                    leftPq.offer(rightPq.poll());
                 }
                 else {
                     if (X < Y) {
-                        minHeap.add(X);
-                        maxHeap.add(Y);
+                        leftPq.offer(X);
+                        rightPq.offer(Y);
                     }
                     else {
-                        minHeap.add(Y);
-                        maxHeap.add(X);
+                        leftPq.offer(Y);
+                        rightPq.offer(X);
                     }
                 }
 
-                mid = minHeap.peek();
-                answer = (answer + minHeap.peek()) % 20_171_109;
+                mid = (mid + leftPq.peek()) % div;
             }
-
-            sb.append("#").append(test).append(" ").append(answer).append("\n");
+            sb.append("#").append(test).append(" ").append(mid).append("\n");
         }
-
         System.out.println(sb);
     }
 }
