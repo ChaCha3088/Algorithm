@@ -1,0 +1,59 @@
+import java.io.*;
+
+public class Main {
+    private static int[][] arr;
+    private static int answer = 0;
+    private static int R;
+    private static int C;
+    private static int[] dy = new int[] {-1, 0, 1};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String[] split = br.readLine().split(" ");
+
+        R = Integer.parseInt(split[0]);
+        C = Integer.parseInt(split[1]);
+
+        arr = new int[R + 1][C + 1];
+
+        for (int r = 1; r <= R; r++) {
+            split = br.readLine().split("");
+
+            for (int c = 1; c <= C; c++) {
+                if (split[c - 1].equals("x")) {
+                    arr[r][c] = 1;
+                }
+            }
+        }
+
+        for (int y = 1; y <= R; y++) {
+            if (dfs(1, y)) {
+                answer += 1;
+            }
+        }
+
+        System.out.println(answer);
+    }
+
+    private static boolean dfs(int x, int y) {
+        arr[y][x] = 1;
+
+        if (x == C) {
+            return true;
+        }
+
+        // 가능한거에서
+        for (int d = 0; d < 3; d++) {
+            // 지도 범위 내 & 건물로 막혀있지 않을 것
+            if (x + 1 <= C && y + dy[d] <= R && y + dy[d] >= 1 && arr[y + dy[d]][x + 1] == 0) {
+                // 탐색하고
+                if (dfs(x + 1, y + dy[d])) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
