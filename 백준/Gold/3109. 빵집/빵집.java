@@ -18,13 +18,13 @@ public class Main {
         R = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
 
-        map = new char[R + 1][];
+        map = new char[R][];
 
-        for (int r = 1; r <= R; r++) {
+        for (int r = 0; r < R; r++) {
             map[r] = br.readLine().toCharArray();
         }
 
-        for (int y = 1; y <= R; y++) {
+        for (int y = 0; y < R; y++) {
             dfs(0, y);
         }
 
@@ -32,22 +32,24 @@ public class Main {
     }
 
     private static boolean dfs(int x, int y) {
-        if (x == C - 1) {
+        int nextX = x + 1;
+        if (nextX == C) {
             answer += 1;
             return true;
         }
 
         // 가능한거에서
         for (int d = 0; d < 3; d++) {
+            int nextY = y + dy[d];
             // 지도 범위 내 & 건물로 막혀있지 않을 것
-            if (x + 1 > C - 1 || y + dy[d] > R || y + dy[d] < 1 || map[y + dy[d]][x + 1] != '.') {
+            if (nextX > C - 1 || nextY > R - 1 || nextY < 0 || map[nextY][nextX] != '.') {
                 continue;
             }
 
-            map[y][x] = 'x';
+            map[nextY][nextX] = 'x';
 
             // 탐색하고
-            if (dfs(x + 1, y + dy[d])) {
+            if (dfs(nextX, nextY)) {
                 return true;
             }
         }
