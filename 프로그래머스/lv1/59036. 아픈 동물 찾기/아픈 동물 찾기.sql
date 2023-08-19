@@ -1,0 +1,6 @@
+-- 아픈 동물의 아이디와 이름을 조회
+-- 아이디 순으로 조회
+SELECT A.ANIMAL_ID, A.NAME
+FROM ANIMAL_INS A
+WHERE A.INTAKE_CONDITION = 'Sick'
+ORDER BY A.ANIMAL_ID
