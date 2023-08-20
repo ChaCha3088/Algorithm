@@ -1,0 +1,12 @@
+-- 둘 이상 등록한 사람을 "헤비 유저"
+-- 헤비 유저가 등록한 공간의 정보를 아이디 순으로 조회
+SELECT P.ID, P.NAME, P.HOST_ID
+FROM PLACES P
+JOIN (
+    SELECT HOST_ID, COUNT(*) AS "PLACE_COUNT"
+    FROM PLACES
+    GROUP BY HOST_ID
+) N
+ON N.HOST_ID = P.HOST_ID
+WHERE N.PLACE_COUNT >= 2
+ORDER BY P.ID
