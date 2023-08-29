@@ -15,32 +15,49 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
 
-        dp = new int[N + 1];
+        if (N <= 3) {
+            dp = new int[4];
+        }
+        else {
+            dp = new int[N + 1];
+        }
 
         Arrays.fill(dp, Integer.MAX_VALUE);
 
-        dfs(N, N, 0);
+        dp[1] = 0;
+        dp[2] = 1;
+        dp[3] = 1;
 
-        System.out.println(dp[N]);
+        System.out.println(dfs(N));
     }
 
-    private static void dfs(int target, int current, int count) {
-        if (current == 1) {
-            if (count < dp[target]) {
-                dp[target] = count;
-            }
-
-            return;
+    private static int dfs(int target) {
+        if (dp[target] != Integer.MAX_VALUE) {
+            return dp[target];
         }
 
-        if (count + 1 < dp[target]) {
-            if (current % 3 == 0) {
-                dfs(target, current / 3, count + 1);
+        int minValue = Integer.MAX_VALUE;
+
+        if (target % 3 == 0) {
+            int result = dfs(target / 3);
+            if (minValue > result) {
+                minValue = result;
             }
-            if (current % 2 == 0){
-                dfs(target,current / 2,count + 1);
-            }
-            dfs(target, current - 1, count + 1);
         }
+
+        if (target % 2 == 0) {
+            int result = dfs(target / 2);
+            if (minValue > result) {
+                minValue = result;
+            }
+        }
+
+        int result = dfs(target - 1);
+        if (minValue > result) {
+            minValue = result;
+        }
+
+        dp[target] = minValue + 1;
+        return minValue + 1;
     }
 }
