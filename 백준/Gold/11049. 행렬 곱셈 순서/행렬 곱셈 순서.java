@@ -9,8 +9,6 @@ public class Main {
     private static int[][] arr;
     private static int[][] dp;
     private static int N;
-    private static long answer = Long.MAX_VALUE;
-    private static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -28,6 +26,7 @@ public class Main {
             arr[n - 1][1] = Integer.parseInt(st.nextToken());
         }
 
+        // 초기값 계산
         for (int i = 0; i < N - 1; i++) {
             dp[i][i + 1] = arr[i][0] * arr[i][1] * arr[i + 1][1];
         }
