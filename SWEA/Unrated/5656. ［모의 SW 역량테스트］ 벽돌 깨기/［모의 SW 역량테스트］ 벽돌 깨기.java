@@ -12,7 +12,7 @@ public class Solution {
     private static int[][] map;
     private static int[][] tempMap;
     private static int[] whereToDrop;
-    private static int result, count;
+    private static int result, countOfBrokenBricks;
     private static int countOfBricks;
     private static int[] dx = {-1, 1, 0, 0};
     private static int[] dy = {0, 0, -1, 1};
@@ -39,9 +39,9 @@ public class Solution {
                 st = new StringTokenizer(br.readLine());
 
                 for (int w = 0; w < W; w++) {
-                    map[h][w] = Integer.parseInt(st.nextToken());
+                    map[H - h - 1][w] = Integer.parseInt(st.nextToken());
 
-                    if (map[h][w] > 0) {
+                    if (map[H - h - 1][w] > 0) {
                         countOfBricks += 1;
                     }
                 }
@@ -56,53 +56,70 @@ public class Solution {
         System.out.println(sb);
     }
 
-    private static void chooseWhereToDrop(int index) {
-        if (index == N) {
-            dropBalls();
+    private static void chooseWhereToDrop(int ballNumber) {
+        if (ballNumber == N) {
+            startGame();
             return;
         }
 
         for (int i = 0; i < W; i++) {
-            whereToDrop[index] = i;
-            chooseWhereToDrop(index + 1);
+            whereToDrop[ballNumber] = i;
+
+            // 다음 구슬 선택
+            chooseWhereToDrop(ballNumber + 1);
         }
     }
 
-    private static void dropBalls() {
+    private static void startGame() {
+        // 지도 초기화 및 복사
         tempMap = new int[H][W];
         for (int i = 0; i < H; i++) {
             tempMap[i] = map[i].clone();
         }
 
-        count = 0;
-        for (int i = 0; i < N; i++) {
+        countOfBrokenBricks = 0;
+        for (int ballNumber = 0; ballNumber < N; ballNumber++) {
+            // 고른 곳에
             for (int j = 0; j < H; j++) {
-                if (tempMap[j][whereToDrop[i]] != 0) {
-                    destroy(j, whereToDrop[i]);
+                // 벽돌이 있으면
+                if (tempMap[H - j - 1][whereToDrop[ballNumber]] != 0) {
+                    // 부순다.
+                    destroy(H - j - 1, whereToDrop[ballNumber]);
+                    // 부수면 끝.
                     break;
                 }
             }
 
+            // 벽을 부수고, 벽돌을 떨어뜨린다.
             dropBricks();
         }
 
-        result = Math.max(result, count);
+        result = Math.max(result, countOfBrokenBricks);
     }
 
-    private static void destroy(int x, int y) {
-        int range = tempMap[x][y] - 1;
+    private static void destroy(int y, int x) {
+        // 부수는 범위
+        int range = tempMap[y][x] - 1;
 
-        count += 1;
-        tempMap[x][y] = 0;
+        // 부순 벽돌 개수 업데이트
+        countOfBrokenBricks += 1;
 
+        // 부순 벽돌 업데이트
+        tempMap[y][x] = 0;
+
+        // 상하좌우로
         for (int i = 0; i < 4; i++) {
+            // 범위
             for (int j = 1; j <= range; j++) {
                 int newX = x + dx[i] * j;
                 int newY = y + dy[i] * j;
 
-                if (newX >= 0 && newX < H && newY >= 0 && newY < W) {
-                    if (tempMap[newX][newY] != 0) {
-                        destroy(newX, newY);
+                // 범위 안에 있을 때
+                if (newY >= 0 && newY < H && newX >= 0 && newX < W) {
+                    // 부술 벽돌이 있으면
+                    if (tempMap[newY][newX] != 0) {
+                        // 부순다.
+                        destroy(newY, newX);
                     }
                 }
             }
@@ -110,21 +127,26 @@ public class Solution {
     }
 
     private static void dropBricks() {
-        for (int i = H - 2; i >= 0; i--) {
-            for (int j = 0; j < W; j++) {
-                if (tempMap[i][j] != 0 && tempMap[i + 1][j] == 0) {
-                    int x = i;
+        for (int h = 1; h < H; h++) {
+            for (int w = 0; w < W; w++) {
+                // 떨어질게 있으면
+                if (tempMap[h][w] != 0 && tempMap[h - 1][w] == 0) {
+                    // 떨어질 y좌표를 구한다.
+                    int y = h;
 
-                    for (int k = i + 1; k < H; k++) {
-                        if (tempMap[k][j] != 0) {
+                    for (int k = h - 1; k >= 0; k--) {
+                        // 아래 뭐가 있으면 끝
+                        if (tempMap[k][w] != 0) {
                             break;
                         }
-
-                        x = k;
+                        y = k;
                     }
 
-                    tempMap[x][j] = tempMap[i][j];
-                    tempMap[i][j] = 0;
+                    // 벽돌 이동
+                    tempMap[y][w] = tempMap[h][w];
+
+                    // 벽돌 없애기
+                    tempMap[h][w] = 0;
                 }
             }
         }
