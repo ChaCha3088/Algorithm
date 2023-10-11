@@ -1,128 +1,115 @@
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-class Combination {
-    int x;
-    int y;
-    double cost;
-
-    Combination(int x, int y, double cost) {
-        this.x = x;
-        this.y = y;
-        this.cost = cost;
-    }
-}
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class Solution {
-    private static int N;
-    private static double E;
-    private static int[] parent;
-    private static int[][] map;
+    private static StringBuilder sb = new StringBuilder();
+    private static int T, N;
+    private static double e;
+    private static long answer;
+    private static Island[] islands;
+    private static List<Edge> edges;
+    private static int[] parents;
+
+    static class Edge {
+        private int from;
+        private int to;
+        private double cost;
+
+        public Edge (int from, int to, double cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
+        }
+    }
+
+    static class Island {
+        private int x;
+        private int y;
+
+        public Island(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        // 테스트 케이스 개수
-        int T = Integer.parseInt(br.readLine());
-
-        for (int i = 1; i <= T; i++) {
-            // 섬의 개수
+        T = Integer.parseInt(br.readLine());
+        for (int t = 1; t <= T; t++) {
             N = Integer.parseInt(br.readLine());
+            islands = new Island[N];
 
-            map = new int[N + 1][];
-
-            String[] x = br.readLine().split(" ");
-            String[] y = br.readLine().split(" ");
-
-            for (int j = 1; j <= N; j++) {
-                map[j] = new int[] {Integer.parseInt(x[j - 1]), Integer.parseInt(y[j - 1])};
+            // 입력
+            StringTokenizer xs = new StringTokenizer(br.readLine());
+            StringTokenizer ys = new StringTokenizer(br.readLine());
+            for (int n = 0; n < N; n++) {
+                islands[n] = new Island(Integer.parseInt(xs.nextToken()), Integer.parseInt(ys.nextToken()));
             }
 
-            E = Double.parseDouble(br.readLine());
+            e = Double.parseDouble(br.readLine());
 
-            List<Combination> list = combination();
-
-            parent = new int[N + 1];
-            for (int j = 1; j <= N; j++) {
-                parent[j] = j;
+            // 간선 저장
+            edges = new ArrayList<>();
+            for (int i = 0; i < islands.length; i++) {
+                for (int j = i + 1; j < islands.length; j++) {
+                    double result = Math.pow(islands[i].x - islands[j].x, 2) + Math.pow(islands[i].y - islands[j].y, 2);
+                    edges.add(new Edge(i, j, result));
+                }
             }
 
-            double answer = 0;
+            // 간선 비용 기준 오름차순 정렬
+            edges.sort(Comparator.comparingDouble(o -> o.cost));
 
-            for (int j = 1; j <= list.size(); j++) {
-                int xP = list.get(j - 1).x;
-                int yP = list.get(j - 1).y;
-                if (!hasSameParent(xP, yP)) {
-                    union(xP, yP);
-                    answer += list.get(j - 1).cost;
+            // 정점 초기화
+            parents = new int[N];
+            for (int i = 1; i < N; i++) {
+                parents[i] = i;
+            }
+
+            int count = 0;
+            answer = 0;
+
+            for (Edge edge : edges) {
+                // 사이클이 형성되지 않으면
+                if (union(edge.from, edge.to)) {
+                    answer += edge.cost;
+                    count += 1;
+
+                    if (count == N - 1) {
+                        break;
+                    }
                 }
             }
 
             // 출력
-            System.out.format("#%d %.0f\n", i, answer);
-        }
-    }
-
-    private static List<Combination> combination() {
-        List<Combination> list = new ArrayList<>();
-
-        // 1부터 N까지
-        for (int i = 1; i <= N; i++) {
-            for (int j = i + 1; j <= N; j++) {
-                int[] a = map[i];
-                int[] b = map[j];
-
-                double cost = E * (Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-
-                list.add(new Combination(i, j, cost));
-            }
+            sb.append("#").append(t).append(" ").append(Math.round(answer * e)).append("\n");
         }
 
-        // 정렬
-        list.sort(new Comparator<Combination>() {
-            @Override
-            public int compare(Combination o1, Combination o2) {
-                if (o1.cost < o2.cost) {
-                    return -1;
-                }
-                else if (o1.cost > o2.cost) {
-                    return 1;
-                }
-                return 0;
-            }
-        });
-
-        return list;
+        System.out.println(sb);
     }
 
-    private static void union(int x, int y) {
-        x = findParent(x);
-        y = findParent(y);
+    private static boolean union(int a, int b) {
+        int aRoot = find(a);
+        int bRoot = find(b);
 
-        if (x != y) {
-            parent[y] = x;
-        }
-    }
-
-    private static boolean hasSameParent(int x, int y) {
-        x = findParent(x);
-        y = findParent(y);
-
-        if (x != y) {
+        // 부모가 같다는건 사이클이 형성된다는 뜻
+        if (aRoot == bRoot) {
             return false;
         }
 
+        parents[aRoot] = bRoot;
         return true;
     }
 
-    private static int findParent(int x) {
-        if (parent[x] == x) {
+    private static int find(int x) {
+        if (parents[x] == x) {
             return x;
         }
-        else {
-            return parent[x] = findParent(parent[x]);
-        }
+
+        return parents[x] = find(parents[x]);
     }
 }
