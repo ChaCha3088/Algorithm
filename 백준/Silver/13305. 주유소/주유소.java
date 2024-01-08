@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 public class Main {
     private static int N;
-    private static int answer = 0;
+    private static long answer = 0;
     private static int[] lengthOfRoads;
     private static int[] priceOfGas;
     private static StringTokenizer st;
@@ -34,23 +34,20 @@ public class Main {
     }
 
     private static void findMinimumInRange(int end) {
-        int length = 0;
-        int validLength = 0;
-        int previousPrice = Integer.MAX_VALUE;
-        int minPrice = 0;
+        long length = 0;
+        long validLength = 0;
+        long minPrice = Integer.MAX_VALUE;
         int minIndex = -1;
 
         for (int i = end; i >= 0; i--) {
             int currentPrice = priceOfGas[i];
             length += lengthOfRoads[i];
 
-            if (currentPrice <= previousPrice) {
+            if (currentPrice <= minPrice) {
                 minPrice = currentPrice;
                 validLength = length;
                 minIndex = i;
             }
-
-            previousPrice = currentPrice;
         }
 
         answer += minPrice * validLength;
