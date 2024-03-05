@@ -1,6 +1,6 @@
 # [level 2] 스킬트리 - 49993 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/49993#fnref1) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/49993) 
 
 ### 성능 요약
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 03월 05일 20:29:58
+2024년 03월 05일 20:30:38
 
 ### 문제 설명
 
