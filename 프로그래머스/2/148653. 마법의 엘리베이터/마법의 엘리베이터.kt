@@ -36,7 +36,7 @@ class Solution {
 
             div *= 10
             stage *= 10
-        }   
+        }
         
         return answer
     }
