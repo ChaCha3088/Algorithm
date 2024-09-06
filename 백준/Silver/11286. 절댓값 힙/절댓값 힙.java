@@ -1,35 +1,52 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
-public class Main {
-    private static StringBuilder sb = new StringBuilder();
+class Main {
+    private static int N;
+    private static Queue<Long> pq1 = new PriorityQueue<>();
+    private static Queue<Long> pq2 = new PriorityQueue<>(Collections.reverseOrder());
+    private static StringBuffer sb = new StringBuffer();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
 
-        Queue<Long> queue = new PriorityQueue<>((o1, o2) -> {
-            if (Math.abs(o1) >= Math.abs(o2)) {
-                if (Math.abs(o1) == Math.abs(o2)) {
-                    return o1 > o2 ? 1 : -1;
+        for (int n = 0; n < N; n++) {
+            long input = Long.parseLong(br.readLine());
+
+            if (input == 0) {
+                if (pq1.isEmpty() && pq2.isEmpty()) {
+                    sb.append(0).append("\n");
                 }
-                return 1;
+                else if (pq1.isEmpty()) {
+                    sb.append(pq2.poll()).append("\n");
+                }
+                else if (pq2.isEmpty()) {
+                    sb.append(pq1.poll()).append("\n");
+                }
+                else {
+                    long a = Math.abs(pq1.peek());
+                    long b = Math.abs(pq2.peek());
+                    if (a < b) {
+                        sb.append(pq1.poll()).append("\n");
+                    }
+                    else if (a >= b) {
+                        sb.append(pq2.poll()).append("\n");
+                    }
+                }
             }
-            return -1;
-        });
-
-        for (int n = 1; n <= N; n++) {
-            Long x = Long.parseLong(br.readLine());
-
-            if (x != 0) {
-                queue.offer(x);
-            }
-            else if (x == 0) {
-                sb.append(queue.isEmpty() ? 0 : queue.poll()).append("\n");
+            else {
+                if (input >= 1) {
+                    pq1.offer(input);
+                }
+                else {
+                    pq2.offer(input);
+                }
             }
         }
 
