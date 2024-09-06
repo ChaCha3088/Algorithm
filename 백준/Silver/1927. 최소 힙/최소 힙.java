@@ -1,34 +1,32 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class Main {
-    private static Queue<Long> pq = new PriorityQueue<>();
+class Main {
+    private static int N;
+    private static Queue<Long> pq1 = new PriorityQueue<>();
     private static StringBuffer sb = new StringBuffer();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
 
         for (int n = 0; n < N; n++) {
-            Long input = Long.parseLong(br.readLine());
+            long input = Long.parseLong(br.readLine());
 
-            // 빼라
-            if (input == 0) {
-                // pq에 뭔가 있을 때
-                if (!pq.isEmpty()) {
-                    sb.append(pq.poll()).append("\n");
+            if (input < 1) {
+                if (pq1.isEmpty()) {
+                    sb.append(0).append("\n");
                 }
                 else {
-                    sb.append(0).append("\n");
+                    sb.append(pq1.poll()).append("\n");
                 }
             }
             else {
-                pq.offer(input);
+                pq1.offer(input);
             }
         }
 
